@@ -1,0 +1,8 @@
+## Build files
+/out
+/build
+
+## Settings
+*.DotSettings.user
+# RenderDoc Capture Settings
+*.cap
