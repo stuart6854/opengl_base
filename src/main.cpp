@@ -3,6 +3,16 @@
 
 #include <iostream>
 
+void glfwErrorCallback(int error, const char* msg)
+{
+    std::cerr << "[GLFW] [" << error << "] " << msg << std::endl;
+}
+
+void openglDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+        std::cout << "[OpenGL] type=" << type << ", severity=" << severity << ", msg=" << message << std::endl;
+}
+
 float vertices[] = 
 {
     -0.5f, -0.5f, 0.0f,
@@ -39,12 +49,18 @@ int main(int, char**)
 {
     std::cout << "Hello OpenGL!\n";
 
-    glfwInit();
+    glfwSetErrorCallback(&glfwErrorCallback);
+
+    if(!glfwInit())
+    {
+        std::cerr << "Failed to initialise GLFW" << std::endl;
+        return -1;
+    }
 
     auto* window = glfwCreateWindow(1280, 720, "OpenGL Window", nullptr, nullptr);
     if(window == nullptr)
     {
-        std::cout << "Failed to create GLFW window" << std::endl;
+        std::cerr << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
     }
@@ -53,9 +69,13 @@ int main(int, char**)
 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) 
     {
-        std::cout << "Failed to initialize OpenGL context" << std::endl;
+        std::cerr << "Failed to initialize OpenGL context" << std::endl;
         return -1;
     }
+
+    // OpenGL Debug Callback
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(&openglDebugCallback, nullptr);
 
     /* Vertex Input */
     GLuint vao;
@@ -108,7 +128,7 @@ int main(int, char**)
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(program);
-        glBindVertexArray(vbo);
+        glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window);
