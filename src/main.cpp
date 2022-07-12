@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include <iostream>
 
@@ -13,11 +14,11 @@ void openglDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
         std::cout << "[OpenGL] type=" << type << ", severity=" << severity << ", msg=" << message << std::endl;
 }
 
-float vertices[] = 
+glm::vec3 vertices[] = 
 {
-    -0.5f, -0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-     0.5f,  0.5f, 0.0f,
+    { -0.5f, -0.5f, 0.0f },
+    {  0.5f, -0.5f, 0.0f },
+    {  0.5f,  0.5f, 0.0f },
 };
 
 int indices[] =

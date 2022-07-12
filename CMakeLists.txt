@@ -13,3 +13,6 @@ target_include_directories(OpenGL_Base PUBLIC libs/glad/include)
 target_link_directories(OpenGL_Base PUBLIC libs/glfw/lib)
 target_link_libraries(OpenGL_Base PUBLIC glfw3)
 target_include_directories(OpenGL_Base PUBLIC libs/glfw/include)
+
+# Include GLM
+target_include_directories(OpenGL_Base PUBLIC libs/glm/include)
