@@ -75,6 +75,7 @@ int main(int, char**)
 
     // OpenGL Debug Callback
     glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(&openglDebugCallback, nullptr);
 
     /* Init ImGui */
