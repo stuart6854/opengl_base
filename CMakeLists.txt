@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.0.0)
 project(OpenGL_Base VERSION 0.1.0)
 
 add_executable(OpenGL_Base 
-    libs/glad/src/glad.c
-    src/main.cpp
+    "libs/glad/src/glad.c"
+    "src/main.cpp"
 )
 
 # Link Glad
