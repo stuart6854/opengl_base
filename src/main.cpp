@@ -72,6 +72,8 @@ int main(int, char**)
         std::cerr << "Failed to initialize OpenGL context" << std::endl;
         return -1;
     }
+    
+    glViewport(0, 0, 1280, 720);
 
     // OpenGL Debug Callback
     glEnable(GL_DEBUG_OUTPUT);
