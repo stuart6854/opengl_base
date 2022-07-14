@@ -7,8 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(OpenGL_Base 
     "libs/glad/src/glad.c"
     "src/main.cpp"
-    "src/imgui_impl_glfw.cpp" 
-    "src/imgui_impl_opengl3.cpp" 
+    "src/imgui/imgui_impl_glfw.cpp" 
+    "src/imgui/imgui_impl_opengl3.cpp" 
 )
 
 # Link Glad
