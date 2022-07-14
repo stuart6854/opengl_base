@@ -1,3 +1,8 @@
+#include "input.hpp"
+#include "mesh.hpp"
+#include "shader.hpp"
+#include "window.hpp"
+
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
@@ -6,11 +11,6 @@
 #include <glm/glm.hpp>
 
 #include <iostream>
-
-void glfwErrorCallback(int error, const char* msg)
-{
-    std::cerr << "[GLFW] [" << error << "] " << msg << std::endl;
-}
 
 void openglDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
@@ -48,34 +48,23 @@ void main()
 } 
 )";
 
-int main(int, char**)
+#define WIN_WIDTH 1280
+#define WIN_HEIGHT 720
+
+int run()
 {
     std::cout << "Hello OpenGL!\n";
 
-    glfwSetErrorCallback(&glfwErrorCallback);
-
-    if (!glfwInit())
-    {
-        std::cerr << "Failed to initialise GLFW" << std::endl;
-        return -1;
-    }
-
-    auto* window = glfwCreateWindow(1280, 720, "OpenGL Window", nullptr, nullptr);
-    if (window == nullptr)
-    {
-        std::cerr << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-
-    glfwMakeContextCurrent(window);
+    Window::init(WIN_WIDTH, WIN_HEIGHT);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        std::cerr << "Failed to initialize OpenGL context" << std::endl;
+        std::cerr << "Failed to initialise OpenGL context" << std::endl;
         return -1;
     }
-    
+
+    Input::init(Window::get());
+
     glViewport(0, 0, 1280, 720);
 
     // OpenGL Debug Callback
@@ -96,51 +85,18 @@ int main(int, char**)
     // ImGui::StyleColorsLight();
 
     // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(Window::get(), true);
     ImGui_ImplOpenGL3_Init("#version 330 core");
 
     /* Vertex Input */
-    GLuint vao;
-    GLuint vbo, ebo;
-    {
-        glCreateVertexArrays(1, &vao);
-
-        // Vertex buffer
-        glCreateBuffers(1, &vbo);
-        glNamedBufferData(vbo, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        // Element buffer
-        glCreateBuffers(1, &ebo);
-        glNamedBufferData(ebo, sizeof(indices), indices, GL_STATIC_DRAW);
-
-        // Assign buffers to Vertex Buffer Object
-        glVertexArrayElementBuffer(vao, ebo);
-        glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(float) * 3);
-
-        // Setup attributes
-        glEnableVertexArrayAttrib(vao, 0);
-        glVertexArrayAttribBinding(vao, 0, 0);
-        glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
-    }
+    Mesh<int> triangleMesh;
+    triangleMesh.setVertices(vertices, sizeof(vertices));
+    triangleMesh.setIndices(indices, sizeof(indices));
+    triangleMesh.apply(GL_TRIANGLES, sizeof(glm::vec3), { { 0, 3, GL_FLOAT, GL_FALSE, 0 } });
 
     /* Pipeline */
-    GLuint program;
-    {
-        GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexShader, 1, &VERTEX_SRC, nullptr);
-        glCompileShader(vertexShader);
-
-        GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentShader, 1, &FRAGMENT_SRC, nullptr);
-        glCompileShader(fragmentShader);
-
-        program = glCreateProgram();
-        glAttachShader(program, vertexShader);
-        glAttachShader(program, fragmentShader);
-        glLinkProgram(program);
-
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
-    }
+    Shader shader;
+    shader.init(VERTEX_SRC, FRAGMENT_SRC);
 
     bool showDemo = false;
     bool showDebug = true;
@@ -148,7 +104,7 @@ int main(int, char**)
     glClearColor(0.3912f, 0.5843f, 0.9294f, 1.0f); // Cornflower Blue
 
     double lastTime = glfwGetTime();
-    while (!glfwWindowShouldClose(window))
+    while (!Window::shouldClose())
     {
         auto time = glfwGetTime();
         float deltaTime = time - lastTime;
@@ -176,27 +132,24 @@ int main(int, char**)
 
         // Insert Rendering code here...
 
-        glUseProgram(program);
-        glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+        shader.bind();
+        triangleMesh.bind();
+        triangleMesh.draw();
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(Window::get());
     }
-
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
-    glDeleteBuffers(1, &ebo);
-    glDeleteProgram(program);
 
     /* Shutdown ImGui */
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
-
     return 0;
+}
+
+int main(int, char**)
+{
+    return run();
 }
