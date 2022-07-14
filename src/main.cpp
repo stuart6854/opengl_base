@@ -14,6 +14,9 @@ void glfwErrorCallback(int error, const char* msg)
 
 void openglDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
+    if (id == 131185)
+        return;
+
     std::cout << "[OpenGL] type=" << type << ", severity=" << severity << ", msg=" << message << std::endl;
 }
 
