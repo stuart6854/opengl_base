@@ -1,0 +1,13 @@
+---
+Language: Cpp
+BasedOnStyle: Microsoft
+ColumnLimit: 160
+IndentWidth: 4
+
+AccessModifierOffset: -4
+AlwaysBreakTemplateDeclarations: Yes
+Cpp11BracedListStyle: false
+IndentPPDirectives: BeforeHash
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: All
+PointerAlignment: Left

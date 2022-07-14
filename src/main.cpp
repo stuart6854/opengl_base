@@ -1,5 +1,5 @@
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 
 #include <iostream>
@@ -11,20 +11,16 @@ void glfwErrorCallback(int error, const char* msg)
 
 void openglDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
-        std::cout << "[OpenGL] type=" << type << ", severity=" << severity << ", msg=" << message << std::endl;
+    std::cout << "[OpenGL] type=" << type << ", severity=" << severity << ", msg=" << message << std::endl;
 }
 
-glm::vec3 vertices[] = 
-{
+glm::vec3 vertices[] = {
     { -0.5f, -0.5f, 0.0f },
-    {  0.5f, -0.5f, 0.0f },
-    {  0.5f,  0.5f, 0.0f },
+    { 0.5f, -0.5f, 0.0f },
+    { 0.5f, 0.5f, 0.0f },
 };
 
-int indices[] =
-{
-    0, 1, 2
-};
+int indices[] = { 0, 1, 2 };
 
 const auto* VERTEX_SRC = R"(
 #version 330 core
@@ -46,20 +42,20 @@ void main()
 } 
 )";
 
-int main(int, char**) 
+int main(int, char**)
 {
     std::cout << "Hello OpenGL!\n";
 
     glfwSetErrorCallback(&glfwErrorCallback);
 
-    if(!glfwInit())
+    if (!glfwInit())
     {
         std::cerr << "Failed to initialise GLFW" << std::endl;
         return -1;
     }
 
     auto* window = glfwCreateWindow(1280, 720, "OpenGL Window", nullptr, nullptr);
-    if(window == nullptr)
+    if (window == nullptr)
     {
         std::cerr << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -68,7 +64,7 @@ int main(int, char**)
 
     glfwMakeContextCurrent(window);
 
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) 
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cerr << "Failed to initialize OpenGL context" << std::endl;
         return -1;
@@ -115,14 +111,14 @@ int main(int, char**)
         program = glCreateProgram();
         glAttachShader(program, vertexShader);
         glAttachShader(program, fragmentShader);
-        glLinkProgram(program);  
+        glLinkProgram(program);
 
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
     }
 
-    glClearColor(0.3912f, 0.5843f, 0.9294f, 1.0f);  // Cornflower Blue
-    while(!glfwWindowShouldClose(window))
+    glClearColor(0.3912f, 0.5843f, 0.9294f, 1.0f); // Cornflower Blue
+    while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
 
