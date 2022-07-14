@@ -1,3 +1,6 @@
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -74,6 +77,22 @@ int main(int, char**)
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(&openglDebugCallback, nullptr);
 
+    /* Init ImGui */
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    // ImGui::StyleColorsLight();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330 core");
+
     /* Vertex Input */
     GLuint vao;
     GLuint vbo, ebo;
@@ -117,16 +136,33 @@ int main(int, char**)
         glDeleteShader(fragmentShader);
     }
 
+    bool showDemo = false;
+
     glClearColor(0.3912f, 0.5843f, 0.9294f, 1.0f); // Cornflower Blue
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
 
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // Insert Update code here...
+        // Insert ImGui code here...
+
+        ImGui::ShowDemoWindow(&showDemo);
+
+        ImGui::Render();
+
         glClear(GL_COLOR_BUFFER_BIT);
+
+        // Insert Rendering code here...
 
         glUseProgram(program);
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(window);
     }
@@ -135,6 +171,11 @@ int main(int, char**)
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ebo);
     glDeleteProgram(program);
+
+    /* Shutdown ImGui */
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glfwDestroyWindow(window);
     glfwTerminate();
