@@ -137,10 +137,17 @@ int main(int, char**)
     }
 
     bool showDemo = false;
+    bool showDebug = true;
 
     glClearColor(0.3912f, 0.5843f, 0.9294f, 1.0f); // Cornflower Blue
+
+    double lastTime = glfwGetTime();
     while (!glfwWindowShouldClose(window))
     {
+        auto time = glfwGetTime();
+        float deltaTime = time - lastTime;
+        lastTime = time;
+
         glfwPollEvents();
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -151,6 +158,11 @@ int main(int, char**)
         // Insert ImGui code here...
 
         ImGui::ShowDemoWindow(&showDemo);
+
+        ImGui::Begin("Debug", &showDebug);
+        ImGui::Text("DeltaTime: %fs", deltaTime);
+        ImGui::Separator();
+        ImGui::End();
 
         ImGui::Render();
 
